@@ -11,9 +11,8 @@
 #define R_READ B10000000
 
 #include <SPI.h>
-#include <LoRa.h>
 
-static const int spiClk = 1600000;
+static const int spiClk = 1000000;
 SPIClass * vspi = NULL;
 SPIClass * hspi = NULL;
 
@@ -42,7 +41,7 @@ void initKx122(){
   
   digitalWrite(5, LOW);
   vspi->transfer(ODCNTL);
-  vspi->transfer(0x07);
+  vspi->transfer(0x02);
   digitalWrite(5, HIGH);
   delay(15);
 
@@ -99,7 +98,6 @@ void setup() {
   pinMode(15, OUTPUT);
 
   Serial.begin(115200);
-  LoRa.begin(915E6);
 
   initKx122();
   Serial.println("Teste de leitura KX122");
@@ -109,12 +107,6 @@ void loop() {
   DataX = readAxis('X');
   DataY = readAxis('Y');
   DataZ = readAxis('Z');
-
-  LoRa.beginPacket();
-  LoRa.print(DataX);
-  LoRa.print(DataY);
-  LoRa.print(DataZ);
-  LoRa.endPacket();
   
   Serial.print("X: ");
   Serial.print(DataX);
