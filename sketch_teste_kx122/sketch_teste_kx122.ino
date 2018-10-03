@@ -13,11 +13,15 @@
 #include <SPI.h>
 #include <LoRa.h>
 
-static const int spiClk = 1600000;
+static const int spiClk = 1000000;
 SPIClass * vspi = NULL;
 SPIClass * hspi = NULL;
 
 int16_t DataX, DataY, DataZ = 0;
+
+const int csPin = 15;
+const int resetPin = 27;
+const int irqPin = 1;
 
 void initKx122(){
   vspi->beginTransaction(SPISettings(spiClk, MSBFIRST, SPI_MODE0));
@@ -42,7 +46,7 @@ void initKx122(){
   
   digitalWrite(5, LOW);
   vspi->transfer(ODCNTL);
-  vspi->transfer(0x07);
+  vspi->transfer(0x02);
   digitalWrite(5, HIGH);
   delay(15);
 
@@ -99,6 +103,7 @@ void setup() {
   pinMode(15, OUTPUT);
 
   Serial.begin(115200);
+  LoRa.setPins(csPin, resetPin, irqPin);
   LoRa.begin(915E6);
 
   initKx122();
